@@ -1,8 +1,15 @@
-# canteen-menu-optimizer
+# Canteen Menu Optimizer
+
+**Project:** ML Mini Project — Classification Challenge 
+<br>
+**Author:** Karan Prabhat
 
 ## Overview
 
 This project predicts students' dietary preferences (Veg, Non-Veg, Vegan, etc.) using survey features such as cuisine choices, spice tolerance, sweet tooth level, BMI, and more. The workflow includes data cleaning, exploratory data analysis (EDA), feature engineering, model building, evaluation, and feature importance analysis.
+
+## Requirements
+See `requirements.txt`.
 
 ## Workflow
 
@@ -54,7 +61,7 @@ This project predicts students' dietary preferences (Veg, Non-Veg, Vegan, etc.) 
 ## Files
 
 - `canteen_data.csv` - Raw survey data
-- `canteen_data_clean.csv` - Cleaned data after preprocessing
+- `canteen_data_clean.csv` - Cleaned data after Preprocessing
 - `Canteen_Menu_Optimizer.ipynb` - Main notebook with code and analysis
 - `final_model_randomforest.joblib` - Saved trained model
 - `plots/` - Directory containing all generated visualizations
@@ -64,3 +71,6 @@ This project predicts students' dietary preferences (Veg, Non-Veg, Vegan, etc.) 
 - The model predicts Non-Veg dietary preference accurately but struggles with minority classes due to dataset imbalance.
 - Feature importance analysis helps identify key factors influencing dietary choices.
 - Results can help canteen managers optimize menu planning and reduce food waste.
+
+## Contact
+prabhatkaran47@gmail.com
