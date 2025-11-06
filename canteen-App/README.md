@@ -19,7 +19,7 @@ canteen-App/
 
 ## 🚀 Quick Start
 
-### Set-Up
+### 🧰 Set-Up
 
 1. **Backend Setup:**
    ```bash
