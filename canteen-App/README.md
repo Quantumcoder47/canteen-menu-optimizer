@@ -6,34 +6,20 @@ A complete machine learning web application for predicting student dietary prefe
 
 ```
 canteen-App/
-├── backend/                 # FastAPI backend server
+├── backend/                # FastAPI backend server
 │   ├── main.py             # API endpoints and ML model serving
 │   └── requirements.txt    # Backend dependencies
 ├── frontend/               # Streamlit frontend application
-│   ├── app.py             # User interface and API client
-│   └── requirements.txt   # Frontend dependencies
-├── model/                 # Trained ML model
+│   ├── app.py              # User interface and API client
+│   └── requirements.txt    # Frontend dependencies
+├── model/                  # Trained ML model
 │   └── canteen_prediction_model.joblib
-├── start_backend.bat      # Windows script to start backend
-├── start_frontend.bat     # Windows script to start frontend
-└── README.md             # This file
+└── README.md               # This file
 ```
 
 ## 🚀 Quick Start
 
-### Option 1: Using Batch Scripts (Windows)
-
-1. **Start Backend Server:**
-   ```bash
-   double-click start_backend.bat
-   ```
-
-2. **Start Frontend Application:**
-   ```bash
-   double-click start_frontend.bat
-   ```
-
-### Option 2: Manual Setup
+### Set-Up
 
 1. **Backend Setup:**
    ```bash
@@ -214,11 +200,19 @@ canteen-App/
 
 ## 📞 Support
 
-For issues or questions:
-1. Check the troubleshooting section
-2. Review API documentation at http://localhost:8000/docs
-3. Check console logs for error messages
+### Getting Help
+
+1. **Check logs:** Both backend and frontend show detailed error messages
+2. **API documentation:** Visit http://localhost:8000/docs for interactive API testing
+3. **Verify setup:** Follow troubleshooting steps above
+
+### System Requirements
+
+- **OS:** Windows, macOS, or Linux
+- **Python:** 3.8 or higher
+- **RAM:** 2GB minimum (4GB recommended)
+- **Storage:** 500MB for dependencies and model
 
 ---
 
-**Built with ❤️ for smart canteen management**
+**🎉 You're all set! Enjoy using the Canteen Menu Optimizer!**
