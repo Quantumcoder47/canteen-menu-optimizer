@@ -1,0 +1,6 @@
+dietary_preference,predicted_demand,recommended_quantity,safety_stock,popular_items,cost_per_meal,total_cost,expected_revenue,expected_profit,profit_margin,preparation_time_minutes,shelf_life_hours,season,seasonal_adjustment
+Non-Veg,97,111,14,"['Chicken Curry', 'Mutton Biryani', 'Fish Fry', 'Egg Curry']",150,16650,25615.384615384613,8965.384615384613,0.35,45,4,summer,True
+Veg,7,9,2,"['Dal Tadka', 'Paneer Curry', 'Veg Biryani', 'Chole Bhature']",100,900,1500.0,600.0,0.4,30,6,summer,True
+Vegan,3,5,2,"['Quinoa Salad', 'Vegan Curry', 'Fruit Bowl', 'Smoothie']",120,600,1090.9090909090908,490.90909090909076,0.45,25,3,summer,True
+Jain,4,6,2,"['Jain Dal', 'Paneer without Onion', 'Jain Sabzi', 'Fruit Salad']",110,660,1064.516129032258,404.51612903225805,0.38,35,5,summer,False
+Eggitarian,2,4,2,"['Egg Curry', 'Omelet', 'Egg Fried Rice', 'Scrambled Eggs']",80,320,640.0,320.0,0.5,15,3,summer,False

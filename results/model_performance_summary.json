@@ -1,0 +1,14 @@
+{
+  "model_type": "RandomForestClassifier",
+  "test_accuracy": 0.8260869565217391,
+  "test_f1_macro": 0.18536585365853658,
+  "test_f1_weighted": 0.7656415694591728,
+  "best_params": {
+    "classifier__class_weight": "balanced",
+    "classifier__max_depth": null,
+    "classifier__min_samples_leaf": 1,
+    "classifier__min_samples_split": 2,
+    "classifier__n_estimators": 100
+  },
+  "cv_score": 0.2765151515151515
+}
