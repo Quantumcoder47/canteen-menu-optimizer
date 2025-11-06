@@ -409,8 +409,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Author**: Karan Prabhat  
 **Email**: prabhatkaran47@gmail.com  
-**LinkedIn**: [Connect with me](https://linkedin.com/in/karanprabhat)  
-**GitHub**: [View more projects](https://github.com/karanprabhat)
+**LinkedIn**: [Connect with me](https://www.linkedin.com/in/karan-prabhat-kp47/)  
+**GitHub**: [View more projects](https://github.com/Quantumcoder47)
 
 ### 💬 **Get Help**
 - 🐛 **Bug Reports**: Open an issue with detailed description
