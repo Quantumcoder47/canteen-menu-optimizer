@@ -80,7 +80,6 @@ canteen-menu-optimizer/
 │   ├── 🧹 improved_canteen_data_clean.csv
 │   └── 📋 model_performance_summary.json
 │
-├── 🛠️ setup.py                       # Automated setup script
 ├── 💻 install.bat                    # Windows installation script
 ├── 📄 requirements.txt               # Complete project dependencies
 ├── 📖 README.md                      # This comprehensive guide
