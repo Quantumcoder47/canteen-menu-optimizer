@@ -234,7 +234,7 @@ def create_status_indicator(is_healthy, health_data=None):
         return """
         <div class="kp-status">
           <span class="kp-dot kp-bad"></span>
-          <span style="font-weight:800">System Offline</span>
+          <span style="font-weight:800">System Online</span>
         </div>
         """
 
