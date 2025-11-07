@@ -364,12 +364,6 @@ st.markdown('<div class="kp-chips"><span class="kp-chip">🤖 Machine Learning</
 ok, hdata = check_backend_health()
 st.markdown(create_status_indicator(ok, hdata), unsafe_allow_html=True)
 
-# Demo mode if backend is not available
-DEMO_MODE = not ok
-if DEMO_MODE:
-    st.info("🎭 Running in Demo Mode - Using simulated predictions (Backend not connected)", icon="ℹ️")
-    st.caption("To connect real backend: Deploy your FastAPI server and update BACKEND_URL in Streamlit secrets")
-
 # -----------------------------------------------------------------------------
 # Input Form - Moved to Main Area for Better Visibility
 # -----------------------------------------------------------------------------
