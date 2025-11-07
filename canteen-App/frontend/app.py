@@ -280,32 +280,48 @@ if not ok:
     st.stop()
 
 # -----------------------------------------------------------------------------
-# Sidebar Form
+# Input Form - Moved to Main Area for Better Visibility
 # -----------------------------------------------------------------------------
-with st.sidebar:
-    st.markdown('<div class="kp-side-title">📝 Student Information</div>', unsafe_allow_html=True)
-    st.caption("Fill in the details below to get AI-powered dietary predictions")
+st.markdown("""
+<div style="background: linear-gradient(135deg, #C62300 0%, #F14A00 100%); 
+            padding: 1.5rem; border-radius: 16px; text-align: center; margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(198, 35, 0, 0.3);">
+    <h2 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.8rem;">📝 Student Information Form</h2>
+    <p style="color: rgba(255,255,255,0.95); margin: 0; font-size: 1rem;">
+        Fill in the details below to get your AI-powered dietary preference prediction
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
-    with st.form("prediction_form"):
-        st.markdown("**👤 Personal Details**")
+with st.form("prediction_form"):
+    st.markdown("### 👤 Personal Details")
+    col1, col2, col3 = st.columns(3)
+    with col1:
         age = st.slider("Age (years)", 16, 30, 21)
-        c1, c2 = st.columns(2)
-        with c1:
-            height_cm = st.number_input("Height (cm)", 140.0, 220.0, 190.0, step=1.0)
-        with c2:
-            weight_kg = st.number_input("Weight (kg)", 40.0, 160.0, 70.0, step=1.0)
+    with col2:
+        height_cm = st.number_input("Height (cm)", 140.0, 220.0, 170.0, step=1.0)
+    with col3:
+        weight_kg = st.number_input("Weight (kg)", 40.0, 160.0, 65.0, step=1.0)
 
-        st.markdown("**🌶️ Food Preferences**")
+    st.markdown("### 🌶️ Food Preferences")
+    col1, col2 = st.columns(2)
+    with col1:
         spice_tolerance = st.select_slider("Spice Tolerance (1–10)", options=list(range(1,11)), value=5)
+    with col2:
         sweet_tooth_level = st.select_slider("Sweet Tooth Level (1–10)", options=list(range(1,11)), value=5)
 
-        st.markdown("**🍽️ Eating Habits**")
-        eating_out_per_week = st.slider("Eating Out Frequency (per week)", 0, 21, 14)
+    st.markdown("### 🍽️ Eating Habits")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        eating_out_per_week = st.slider("Eating Out Frequency (per week)", 0, 21, 3)
+    with col2:
         food_budget_per_meal = st.slider("Food Budget per Meal (₹)", 50.0, 1000.0, 150.0, step=10.0)
+    with col3:
         cuisine_options = ["Indian","Chinese","Italian","Mexican","Thai","Continental","Japanese","Mediterranean"]
         cuisine_top1 = st.selectbox("Preferred Cuisine", cuisine_options, index=0)
 
-        submitted = st.form_submit_button("🔮 Generate AI Prediction", use_container_width=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    submitted = st.form_submit_button("🔮 Generate AI Prediction", use_container_width=True, type="primary")
 
 # -----------------------------------------------------------------------------
 # Main content
@@ -441,6 +457,18 @@ if submitted:
     )
 
 else:
+    # Show instructions when no prediction yet
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(80,0,115,0.3) 0%, rgba(42,0,78,0.3) 100%); 
+                padding: 2rem; border-radius: 16px; text-align: center; margin: 2rem 0;
+                border: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="color: #F3EAFD; margin: 0 0 1rem 0;">👆 Fill out the form above and click "Generate AI Prediction"</h3>
+        <p style="color: #CDB7E6; margin: 0;">
+            Enter student information to get personalized dietary preference predictions with business insights
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Welcome section with spacing
     st.markdown('<div class="kp-section kp-card"><h3>🎯 How Our AI System Works</h3></div>', unsafe_allow_html=True)
 
