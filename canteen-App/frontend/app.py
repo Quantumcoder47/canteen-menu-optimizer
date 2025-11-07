@@ -456,15 +456,19 @@ if submitted:
         st.markdown('<div class="kp-card"><h3>🎯 AI Prediction Results</h3></div>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3, gap="large")
         
-        # Use demo prediction if backend unavailable
-        if DEMO_MODE:
+        # Check if backend is available, otherwise use demo prediction
+        if not ok:
             data = generate_demo_prediction(input_data)
+            st.warning("⚠️ Using simulated prediction (Backend not connected)", icon="⚠️")
         else:
             result = make_prediction(input_data)
             if not result["success"]:
                 st.error(result["error"])
-                st.stop()
-            data = result["data"]
+                # Fallback to demo mode if API fails
+                data = generate_demo_prediction(input_data)
+                st.warning("⚠️ API error - Using simulated prediction", icon="⚠️")
+            else:
+                data = result["data"]
         with c1:
             st.markdown(metric_card("Predicted Preference", f"{data['predicted_preference']}", f"{data['confidence']} confidence"), unsafe_allow_html=True)
         with c2:
