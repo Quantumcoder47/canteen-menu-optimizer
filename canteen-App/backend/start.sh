@@ -7,6 +7,6 @@ if [ -f "../model/canteen_prediction_model.joblib" ]; then
     cp ../model/canteen_prediction_model.joblib ./canteen_prediction_model.joblib
 fi
 
-# Start the FastAPI server
-echo "Starting FastAPI server..."
-uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Start the FastAPI server with Gunicorn
+echo "Starting FastAPI server with Gunicorn..."
+gunicorn -c gunicorn_conf.py main:app
