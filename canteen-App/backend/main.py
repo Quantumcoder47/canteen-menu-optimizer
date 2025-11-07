@@ -82,21 +82,27 @@ def load_model():
     global model, feature_names
     
     try:
-        model_path = Path("../model/canteen_prediction_model.joblib")
-        if not model_path.exists():
-            # Try alternative paths
-            alternative_paths = [
-                Path("model/canteen_prediction_model.joblib"),
-                Path("canteen-App/model/canteen_prediction_model.joblib"),
-                Path("../canteen-App/model/canteen_prediction_model.joblib")
-            ]
-            
-            for path in alternative_paths:
-                if path.exists():
-                    model_path = path
-                    break
-            else:
-                raise FileNotFoundError("Model file not found in any expected location")
+        # Try multiple paths for model file
+        possible_paths = [
+            Path("../model/canteen_prediction_model.joblib"),
+            Path("model/canteen_prediction_model.joblib"),
+            Path("canteen-App/model/canteen_prediction_model.joblib"),
+            Path("../canteen-App/model/canteen_prediction_model.joblib"),
+            Path("/opt/render/project/src/canteen-App/model/canteen_prediction_model.joblib"),
+            Path("./canteen_prediction_model.joblib")
+        ]
+        
+        model_path = None
+        for path in possible_paths:
+            if path.exists():
+                model_path = path
+                break
+        
+        if model_path is None:
+            # List current directory for debugging
+            logger.error(f"Current directory: {os.getcwd()}")
+            logger.error(f"Directory contents: {os.listdir('.')}")
+            raise FileNotFoundError("Model file not found in any expected location")
         
         logger.info(f"Loading model from: {model_path}")
         model = joblib.load(model_path)
