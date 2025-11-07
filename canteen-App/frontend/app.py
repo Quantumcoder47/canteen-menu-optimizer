@@ -19,6 +19,10 @@ import plotly.graph_objects as go
 from typing import Dict, Any
 import time
 from datetime import datetime
+import joblib
+import numpy as np
+from pathlib import Path
+import os
 
 # -----------------------------------------------------------------------------
 # Page Config
@@ -35,10 +39,38 @@ st.set_page_config(
     }
 )
 
-# API Configuration
-# For local development: http://localhost:8000
-# For production: Replace with your deployed backend URL
-BACKEND_URL = st.secrets.get("BACKEND_URL", "http://localhost:8000")
+# Model Configuration - Load ML model directly
+@st.cache_resource
+def load_ml_model():
+    """Load the trained ML model"""
+    try:
+        # Try multiple paths for model file
+        possible_paths = [
+            Path("canteen-App/model/canteen_prediction_model.joblib"),
+            Path("model/canteen_prediction_model.joblib"),
+            Path("../model/canteen_prediction_model.joblib"),
+            Path("./canteen_prediction_model.joblib")
+        ]
+        
+        model_path = None
+        for path in possible_paths:
+            if path.exists():
+                model_path = path
+                break
+        
+        if model_path is None:
+            st.error(f"Model file not found. Current directory: {os.getcwd()}")
+            return None
+        
+        model = joblib.load(model_path)
+        return model
+        
+    except Exception as e:
+        st.error(f"Error loading model: {str(e)}")
+        return None
+
+# Load model at startup
+ML_MODEL = load_ml_model()
 
 # -----------------------------------------------------------------------------
 # THEME CSS — Purple–Orange, refined, and with proper spacing
@@ -238,69 +270,112 @@ def create_status_indicator(is_healthy, health_data=None):
         </div>
         """
 
-def check_backend_health():
-    try:
-        r = requests.get(f"{BACKEND_URL}/health", timeout=5)
-        return r.status_code == 200, (r.json() if r.status_code == 200 else None)
-    except Exception:
-        return False, None
+def preprocess_input_data(input_data: Dict[str, Any]) -> pd.DataFrame:
+    """Preprocess input data to match model expectations"""
+    
+    # Calculate BMI
+    height_m = input_data['height_cm'] / 100
+    bmi = input_data['weight_kg'] / (height_m ** 2)
+    input_data['bmi'] = round(bmi, 2)
+    
+    # Create BMI category
+    if bmi < 18.5:
+        bmi_category = "Underweight"
+    elif bmi < 25:
+        bmi_category = "Normal"
+    elif bmi < 30:
+        bmi_category = "Overweight"
+    else:
+        bmi_category = "Obese"
+    input_data['bmi_category'] = bmi_category
+    
+    # Create budget category
+    budget = input_data['food_budget_per_meal']
+    if budget <= 100:
+        budget_category = "Low"
+    elif budget <= 200:
+        budget_category = "Medium"
+    elif budget <= 500:
+        budget_category = "High"
+    else:
+        budget_category = "Premium"
+    input_data['budget_category'] = budget_category
+    
+    # Create eating frequency category
+    eating_freq = input_data['eating_out_per_week']
+    if eating_freq <= 2:
+        freq_category = "Rare"
+    elif eating_freq <= 5:
+        freq_category = "Occasional"
+    elif eating_freq <= 7:
+        freq_category = "Frequent"
+    else:
+        freq_category = "Daily"
+    input_data['eating_frequency_category'] = freq_category
+    
+    # Create engineered features
+    input_data['spice_sweet_interaction'] = input_data['spice_tolerance'] * input_data['sweet_tooth_level']
+    input_data['preference_intensity'] = (input_data['spice_tolerance'] + input_data['sweet_tooth_level']) / 2
+    input_data['num_cuisines_recorded'] = 1
+    input_data['cuisine_diversity'] = 1
+    
+    # Create DataFrame with expected features
+    expected_features = [
+        'age', 'bmi', 'spice_tolerance', 'sweet_tooth_level',
+        'eating_out_per_week', 'food_budget_per_meal',
+        'num_cuisines_recorded', 'cuisine_diversity',
+        'spice_sweet_interaction', 'preference_intensity',
+        'cuisine_top1', 'bmi_category', 'budget_category', 'eating_frequency_category'
+    ]
+    
+    # Create DataFrame with only expected features
+    processed_data = {feature: input_data.get(feature, 0) for feature in expected_features}
+    df = pd.DataFrame([processed_data])
+    
+    return df
 
 def make_prediction(input_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Make prediction using the loaded ML model"""
     try:
-        r = requests.post(f"{BACKEND_URL}/predict", json=input_data, timeout=30)
-        if r.status_code == 200:
-            return {"success": True, "data": r.json()}
-        return {"success": False, "error": f"API Error: {r.status_code} — {r.text}"}
-    except requests.exceptions.ConnectionError:
-        return {"success": False, "error": "Cannot connect to backend. Please ensure the API server is running."}
-    except requests.exceptions.Timeout:
-        return {"success": False, "error": "Request timeout. Please try again."}
+        if ML_MODEL is None:
+            return {"success": False, "error": "Model not loaded"}
+        
+        # Preprocess input data
+        processed_df = preprocess_input_data(input_data.copy())
+        
+        # Make prediction
+        prediction = ML_MODEL.predict(processed_df)[0]
+        probabilities = ML_MODEL.predict_proba(processed_df)[0]
+        
+        # Get class names
+        class_names = ML_MODEL.named_steps['classifier'].classes_
+        
+        # Calculate confidence
+        max_prob = np.max(probabilities)
+        confidence = "High" if max_prob > 0.7 else "Medium" if max_prob > 0.5 else "Low"
+        
+        # Create probability dictionary
+        prob_dict = {class_name: float(prob) for class_name, prob in zip(class_names, probabilities)}
+        
+        # Generate business insights
+        business_insights = get_business_insights(prediction, max_prob, input_data)
+        
+        return {
+            "success": True,
+            "data": {
+                "predicted_preference": prediction,
+                "confidence": confidence,
+                "probability": float(max_prob),
+                "all_probabilities": prob_dict,
+                "business_insights": business_insights
+            }
+        }
+        
     except Exception as e:
-        return {"success": False, "error": f"Unexpected error: {e}"}
+        return {"success": False, "error": f"Prediction failed: {str(e)}"}
 
-def metric_card(title, value, sub):
-    return f"""
-    <div class="kp-feature" style="animation: fadeInUp .5s ease;">
-      <div class="kp-metric-head">{title}</div>
-      <div class="kp-metric-val">{value}</div>
-      <div class="kp-metric-sub">{sub}</div>
-    </div>
-    """
-
-def generate_demo_prediction(input_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Generate a simulated prediction for demo mode"""
-    import random
-    
-    # Simple rule-based prediction for demo
-    bmi = input_data['weight_kg'] / ((input_data['height_cm']/100) ** 2)
-    
-    # Determine likely preference based on inputs
-    if input_data['spice_tolerance'] >= 7 and input_data['cuisine_top1'] in ['Indian', 'Thai', 'Mexican']:
-        predicted = 'Non-Veg'
-        prob = 0.75
-    elif bmi < 20 and input_data['sweet_tooth_level'] >= 7:
-        predicted = 'Vegan'
-        prob = 0.68
-    elif input_data['food_budget_per_meal'] < 100:
-        predicted = 'Eggitarian'
-        prob = 0.72
-    elif input_data['cuisine_top1'] == 'Indian' and input_data['spice_tolerance'] < 5:
-        predicted = 'Jain'
-        prob = 0.65
-    else:
-        predicted = 'Veg'
-        prob = 0.70
-    
-    # Generate probabilities for all classes
-    classes = ['Non-Veg', 'Veg', 'Vegan', 'Jain', 'Eggitarian']
-    probs = {c: random.uniform(0.05, 0.15) for c in classes}
-    probs[predicted] = prob
-    
-    # Normalize
-    total = sum(probs.values())
-    probs = {k: v/total for k, v in probs.items()}
-    
-    confidence = "High" if prob > 0.7 else "Medium" if prob > 0.5 else "Low"
+def get_business_insights(prediction: str, probability: float, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate business insights based on prediction"""
     
     business_rules = {
         'Non-Veg': {
@@ -335,25 +410,45 @@ def generate_demo_prediction(input_data: Dict[str, Any]) -> Dict[str, Any]:
         }
     }
     
-    rules = business_rules[predicted]
+    rules = business_rules.get(prediction, business_rules['Non-Veg'])
+    
+    # Determine confidence level
+    if probability > 0.8:
+        confidence_level = "Very High"
+        reliability = "Highly reliable prediction"
+    elif probability > 0.6:
+        confidence_level = "High"
+        reliability = "Reliable prediction"
+    elif probability > 0.4:
+        confidence_level = "Medium"
+        reliability = "Moderately reliable prediction"
+    else:
+        confidence_level = "Low"
+        reliability = "Low confidence - consider multiple options"
+    
+    # Budget compatibility
+    budget_match = "High" if input_data['food_budget_per_meal'] >= rules['avg_cost'] else "Medium" if input_data['food_budget_per_meal'] >= rules['avg_cost'] * 0.8 else "Low"
     
     return {
-        'predicted_preference': predicted,
-        'confidence': confidence,
-        'probability': probs[predicted],
-        'all_probabilities': probs,
-        'business_insights': {
-            'popular_items': rules['popular_items'],
-            'estimated_cost': rules['avg_cost'],
-            'profit_margin': f"{rules['profit_margin']*100:.0f}%",
-            'recommendations': rules['recommendations'],
-            'confidence_level': confidence,
-            'reliability': 'Demo Mode - Simulated Prediction',
-            'budget_compatibility': 'High' if input_data['food_budget_per_meal'] >= rules['avg_cost'] else 'Medium',
-            'spice_preference': 'High' if input_data['spice_tolerance'] >= 7 else 'Medium' if input_data['spice_tolerance'] >= 4 else 'Low',
-            'sweet_preference': 'High' if input_data['sweet_tooth_level'] >= 7 else 'Medium' if input_data['sweet_tooth_level'] >= 4 else 'Low'
-        }
+        'popular_items': rules['popular_items'],
+        'estimated_cost': rules['avg_cost'],
+        'profit_margin': f"{rules['profit_margin']*100:.0f}%",
+        'recommendations': rules['recommendations'],
+        'confidence_level': confidence_level,
+        'reliability': reliability,
+        'budget_compatibility': budget_match,
+        'spice_preference': "High" if input_data['spice_tolerance'] >= 7 else "Medium" if input_data['spice_tolerance'] >= 4 else "Low",
+        'sweet_preference': "High" if input_data['sweet_tooth_level'] >= 7 else "Medium" if input_data['sweet_tooth_level'] >= 4 else "Low"
     }
+
+def metric_card(title, value, sub):
+    return f"""
+    <div class="kp-feature" style="animation: fadeInUp .5s ease;">
+      <div class="kp-metric-head">{title}</div>
+      <div class="kp-metric-val">{value}</div>
+      <div class="kp-metric-sub">{sub}</div>
+    </div>
+    """
 
 # -----------------------------------------------------------------------------
 # Header
@@ -361,8 +456,13 @@ def generate_demo_prediction(input_data: Dict[str, Any]) -> Dict[str, Any]:
 st.markdown('<div class="kp-section kp-hero"><h1>🍽️ Canteen Menu Optimizer</h1><p>AI-Powered Dietary Preference Prediction for Smart Menu Planning</p></div>', unsafe_allow_html=True)
 st.markdown('<div class="kp-chips"><span class="kp-chip">🤖 Machine Learning</span><span class="kp-chip">📊 Analytics</span><span class="kp-chip">💡 Business Intelligence</span></div>', unsafe_allow_html=True)
 
-ok, hdata = check_backend_health()
-st.markdown(create_status_indicator(ok, hdata), unsafe_allow_html=True)
+# Check if model is loaded
+model_status = ML_MODEL is not None
+st.markdown(create_status_indicator(model_status, {"timestamp": datetime.now().isoformat()}), unsafe_allow_html=True)
+
+if not model_status:
+    st.error("⚠️ ML Model failed to load. Please check the model file.", icon="⚠️")
+    st.stop()
 
 # -----------------------------------------------------------------------------
 # Input Form - Moved to Main Area for Better Visibility
@@ -456,19 +556,13 @@ if submitted:
         st.markdown('<div class="kp-card"><h3>🎯 AI Prediction Results</h3></div>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3, gap="large")
         
-        # Check if backend is available, otherwise use demo prediction
-        if not ok:
-            data = generate_demo_prediction(input_data)
-            st.warning("⚠️ Using simulated prediction (Backend not connected)", icon="⚠️")
-        else:
-            result = make_prediction(input_data)
-            if not result["success"]:
-                st.error(result["error"])
-                # Fallback to demo mode if API fails
-                data = generate_demo_prediction(input_data)
-                st.warning("⚠️ API error - Using simulated prediction", icon="⚠️")
-            else:
-                data = result["data"]
+        # Make prediction using ML model
+        result = make_prediction(input_data)
+        if not result["success"]:
+            st.error(f"❌ Prediction failed: {result['error']}")
+            st.stop()
+        
+        data = result["data"]
         with c1:
             st.markdown(metric_card("Predicted Preference", f"{data['predicted_preference']}", f"{data['confidence']} confidence"), unsafe_allow_html=True)
         with c2:
