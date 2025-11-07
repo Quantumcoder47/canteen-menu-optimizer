@@ -1,29 +1,24 @@
-# ============================================================
-# ✅ CLEAN REQUIREMENTS FOR STREAMLIT CLOUD DEPLOYMENT
-# Canteen Menu Optimizer - Frontend (Streamlit App)
-# ============================================================
+# Core
+numpy>=1.22,<2.0
+scipy>=1.9,<1.13
+pandas>=1.5,<3.0
+scikit-learn==1.7.1
+joblib>=1.2,<2.0
 
-# Core Data Science & ML Libraries
-pandas==2.1.4
-numpy==1.26.4
-scikit-learn==1.3.2
-matplotlib==3.8.0
-seaborn==0.12.2
-joblib==1.3.2
-imbalanced-learn==0.10.1
+# Viz
+matplotlib>=3.6,<4.0
+seaborn>=0.12,<0.14
+plotly
 
-# Frontend & Visualization
-streamlit==1.28.1
-plotly==5.17.0
-requests==2.31.0
+# Notebook
+jupyter>=1.0,<2.0
+notebook>=6.5,<8.0
+ipykernel>=6.20,<7.0
 
-# Lightweight validation and parsing
-pydantic==2.5.0
-
-# ============================================================
-# Optional: If your Streamlit app needs to communicate with backend
-# (comment these out if deploying only frontend)
-# fastapi==0.104.1
-# uvicorn==0.24.0
-# python-multipart==0.0.6
-# ============================================================
+# App
+streamlit
+fastapi
+uvicorn
+pydantic
+requests
+python-multipart
