@@ -35,8 +35,10 @@ st.set_page_config(
     }
 )
 
-# API
-BACKEND_URL = "http://localhost:8000"   # change if deployed
+# API Configuration
+# For local development: http://localhost:8000
+# For production: Replace with your deployed backend URL
+BACKEND_URL = st.secrets.get("BACKEND_URL", "http://localhost:8000")
 
 # -----------------------------------------------------------------------------
 # THEME CSS — Purple–Orange, refined, and with proper spacing
@@ -265,6 +267,94 @@ def metric_card(title, value, sub):
     </div>
     """
 
+def generate_demo_prediction(input_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate a simulated prediction for demo mode"""
+    import random
+    
+    # Simple rule-based prediction for demo
+    bmi = input_data['weight_kg'] / ((input_data['height_cm']/100) ** 2)
+    
+    # Determine likely preference based on inputs
+    if input_data['spice_tolerance'] >= 7 and input_data['cuisine_top1'] in ['Indian', 'Thai', 'Mexican']:
+        predicted = 'Non-Veg'
+        prob = 0.75
+    elif bmi < 20 and input_data['sweet_tooth_level'] >= 7:
+        predicted = 'Vegan'
+        prob = 0.68
+    elif input_data['food_budget_per_meal'] < 100:
+        predicted = 'Eggitarian'
+        prob = 0.72
+    elif input_data['cuisine_top1'] == 'Indian' and input_data['spice_tolerance'] < 5:
+        predicted = 'Jain'
+        prob = 0.65
+    else:
+        predicted = 'Veg'
+        prob = 0.70
+    
+    # Generate probabilities for all classes
+    classes = ['Non-Veg', 'Veg', 'Vegan', 'Jain', 'Eggitarian']
+    probs = {c: random.uniform(0.05, 0.15) for c in classes}
+    probs[predicted] = prob
+    
+    # Normalize
+    total = sum(probs.values())
+    probs = {k: v/total for k, v in probs.items()}
+    
+    confidence = "High" if prob > 0.7 else "Medium" if prob > 0.5 else "Low"
+    
+    business_rules = {
+        'Non-Veg': {
+            'popular_items': ['Chicken Curry', 'Mutton Biryani', 'Fish Fry', 'Egg Curry'],
+            'avg_cost': 150,
+            'profit_margin': 0.35,
+            'recommendations': ['Focus on protein-rich options', 'Offer spicy variants']
+        },
+        'Veg': {
+            'popular_items': ['Dal Tadka', 'Paneer Curry', 'Veg Biryani', 'Chole Bhature'],
+            'avg_cost': 100,
+            'profit_margin': 0.40,
+            'recommendations': ['Emphasize fresh vegetables', 'Offer healthy options']
+        },
+        'Vegan': {
+            'popular_items': ['Quinoa Salad', 'Vegan Curry', 'Fruit Bowl', 'Smoothie'],
+            'avg_cost': 120,
+            'profit_margin': 0.45,
+            'recommendations': ['Focus on plant-based proteins', 'Highlight nutritional benefits']
+        },
+        'Jain': {
+            'popular_items': ['Jain Dal', 'Paneer without Onion', 'Jain Sabzi', 'Fruit Salad'],
+            'avg_cost': 110,
+            'profit_margin': 0.38,
+            'recommendations': ['Ensure no root vegetables', 'Offer traditional Jain dishes']
+        },
+        'Eggitarian': {
+            'popular_items': ['Egg Curry', 'Omelet', 'Egg Fried Rice', 'Scrambled Eggs'],
+            'avg_cost': 80,
+            'profit_margin': 0.50,
+            'recommendations': ['Quick preparation items', 'Breakfast options']
+        }
+    }
+    
+    rules = business_rules[predicted]
+    
+    return {
+        'predicted_preference': predicted,
+        'confidence': confidence,
+        'probability': probs[predicted],
+        'all_probabilities': probs,
+        'business_insights': {
+            'popular_items': rules['popular_items'],
+            'estimated_cost': rules['avg_cost'],
+            'profit_margin': f"{rules['profit_margin']*100:.0f}%",
+            'recommendations': rules['recommendations'],
+            'confidence_level': confidence,
+            'reliability': 'Demo Mode - Simulated Prediction',
+            'budget_compatibility': 'High' if input_data['food_budget_per_meal'] >= rules['avg_cost'] else 'Medium',
+            'spice_preference': 'High' if input_data['spice_tolerance'] >= 7 else 'Medium' if input_data['spice_tolerance'] >= 4 else 'Low',
+            'sweet_preference': 'High' if input_data['sweet_tooth_level'] >= 7 else 'Medium' if input_data['sweet_tooth_level'] >= 4 else 'Low'
+        }
+    }
+
 # -----------------------------------------------------------------------------
 # Header
 # -----------------------------------------------------------------------------
@@ -274,10 +364,11 @@ st.markdown('<div class="kp-chips"><span class="kp-chip">🤖 Machine Learning</
 ok, hdata = check_backend_health()
 st.markdown(create_status_indicator(ok, hdata), unsafe_allow_html=True)
 
-if not ok:
-    st.warning("⚠️ Backend API connection failed. Start your FastAPI server and refresh.", icon="⚠️")
-    st.info("Quick tip: `uvicorn main:app --reload --port 8000`")
-    st.stop()
+# Demo mode if backend is not available
+DEMO_MODE = not ok
+if DEMO_MODE:
+    st.info("🎭 Running in Demo Mode - Using simulated predictions (Backend not connected)", icon="ℹ️")
+    st.caption("To connect real backend: Deploy your FastAPI server and update BACKEND_URL in Streamlit secrets")
 
 # -----------------------------------------------------------------------------
 # Input Form - Moved to Main Area for Better Visibility
@@ -370,11 +461,16 @@ if submitted:
     with st.container():
         st.markdown('<div class="kp-card"><h3>🎯 AI Prediction Results</h3></div>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3, gap="large")
-        result = make_prediction(input_data)
-        if not result["success"]:
-            st.error(result["error"])
-            st.stop()
-        data = result["data"]
+        
+        # Use demo prediction if backend unavailable
+        if DEMO_MODE:
+            data = generate_demo_prediction(input_data)
+        else:
+            result = make_prediction(input_data)
+            if not result["success"]:
+                st.error(result["error"])
+                st.stop()
+            data = result["data"]
         with c1:
             st.markdown(metric_card("Predicted Preference", f"{data['predicted_preference']}", f"{data['confidence']} confidence"), unsafe_allow_html=True)
         with c2:
