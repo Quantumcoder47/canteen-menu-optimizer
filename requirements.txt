@@ -16,6 +16,14 @@ plotly>=5.17.0
 streamlit>=1.28.0
 requests>=2.31.0
 
+
+# Frontend Requirements - Streamlit Cloud Compatible
+streamlit>=1.28.0
+requests>=2.31.0
+pandas>=2.0.0
+plotly>=5.17.0
+numpy>=1.24.0
+
 # Optional: For local development only (not needed for Streamlit Cloud)
 # fastapi>=0.104.0
 # uvicorn[standard]>=0.24.0
