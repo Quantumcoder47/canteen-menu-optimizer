@@ -1,5 +1,8 @@
-# Requirements for Canteen Menu Optimizer
+# Requirements for Canteen Menu Optimizer - Streamlit App
 # Optimized for Streamlit Cloud deployment with Python 3.9-3.11
+
+# Web Framework
+streamlit>=1.28.0
 
 # Core Data Science Libraries (with pre-built wheels)
 numpy>=1.24.0,<2.0
@@ -8,46 +11,4 @@ scikit-learn>=1.3.0,<1.6.0
 joblib>=1.3.0,<2.0
 
 # Visualization Libraries
-matplotlib>=3.7.0,<4.0
-seaborn>=0.12.0,<0.14.0
 plotly>=5.17.0
-
-# Web Framework & API
-streamlit>=1.28.0
-requests>=2.31.0
-
-
-# Frontend Requirements - Streamlit Cloud Compatible
-streamlit>=1.28.0
-requests>=2.31.0
-pandas>=2.0.0
-plotly>=5.17.0
-numpy>=1.24.0
-
-# Backend Requirements for Canteen Menu Optimizer API
-# Compatible with Python 3.9-3.11
-
-# Web Framework
-fastapi>=0.104.0,<0.110.0
-uvicorn[standard]>=0.24.0,<0.28.0
-pydantic>=2.5.0,<3.0.0
-python-multipart>=0.0.6
-
-# Machine Learning & Data Processing
-scikit-learn>=1.3.0,<1.6.0
-joblib>=1.3.0,<2.0
-numpy>=1.24.0,<2.0
-pandas>=2.0.0,<3.0
-
-# CORS & Middleware
-python-dotenv>=1.0.0
-
-
-# Optional: For local development only (not needed for Streamlit Cloud)
-# fastapi>=0.104.0
-# uvicorn[standard]>=0.24.0
-# pydantic>=2.5.0
-# python-multipart>=0.0.6
-# jupyter>=1.0.0
-# notebook>=6.5.0
-# ipykernel>=6.25.0

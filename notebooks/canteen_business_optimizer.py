@@ -10,8 +10,8 @@ This system provides:
 - Seasonal trend analysis
 - Customer segmentation
 
-Author: AI Assistant
-Date: 2024
+Author: Karan Prabhat
+Date: 2025
 """
 
 import sys
