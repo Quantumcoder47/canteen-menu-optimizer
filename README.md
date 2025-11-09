@@ -2,10 +2,10 @@
 
 **A Complete AI-Powered Food Intelligence System**
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3+-orange.svg)](https://scikit-learn.org)
+[![Deployed](https://img.shields.io/badge/Deployed-Streamlit%20Cloud-green.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Author:** Karan Prabhat  
@@ -19,18 +19,18 @@
 ### 🎯 **What Makes This Special**
 - **Complete End-to-End ML Pipeline**: From raw data to production-ready web application
 - **Advanced Class Imbalance Handling**: SMOTE, balanced weights, and ensemble methods
-- **Production-Ready Architecture**: FastAPI backend + Streamlit frontend with modern UI/UX
+- **Integrated Architecture**: ML model directly embedded in Streamlit app for instant predictions
 - **Business Intelligence Integration**: Real-time inventory optimization and cost analysis
 - **82.6% Model Accuracy**: With comprehensive feature engineering and hyperparameter tuning
-- **Scalable Design**: Microservices architecture ready for deployment
+- **Cloud-Ready Design**: Single deployment on Streamlit Cloud with zero backend setup
 
 ### 🚀 **Key Achievements**
 - ✅ **Advanced Feature Engineering**: 14+ engineered features including BMI categories, interaction terms
 - ✅ **Modern Web Application**: Eye-catching UI with animations, gradients, and responsive design  
-- ✅ **RESTful API**: Complete FastAPI backend with automatic documentation
+- ✅ **Integrated ML Model**: Direct model loading with joblib for instant predictions
 - ✅ **Business Impact Analysis**: ROI calculations, profit optimization, inventory recommendations
-- ✅ **Comprehensive Testing**: Automated system tests and health checks
-- ✅ **Production Ready**: Docker-ready, scalable architecture with proper error handling
+- ✅ **Cloud Deployment**: Live on Streamlit Cloud with automatic updates
+- ✅ **Production Ready**: Optimized architecture with proper error handling and caching
 
 ---
 
@@ -51,12 +51,12 @@
 ```
 canteen-menu-optimizer/
 ├── 📁 canteen-App/                    # Complete Web Application
-│   ├── 📁 backend/                    # FastAPI Backend Server
-│   │   ├── 🐍 main.py                # API endpoints & ML model serving
+│   ├── 📁 frontend/                   # Streamlit App (Integrated ML)
+│   │   ├── 🎨 app.py                 # Modern UI with ML model
+│   │   └── 📄 .streamlit/            # Streamlit configuration
+│   ├── 📁 backend/                    # Legacy Backend (Optional)
+│   │   ├── 🐍 main.py                # FastAPI server (for reference)
 │   │   └── 📄 requirements.txt       # Backend dependencies
-│   ├── 📁 frontend/                   # Streamlit Frontend App
-│   │   ├── 🎨 app.py                 # Modern UI with animations
-│   │   └── 📄 requirements.txt       # Frontend dependencies
 │   ├── 📁 model/                     # Trained ML Models
 │   │   └── 🤖 canteen_prediction_model.joblib
 │   └── 📖 README.md                  # Web app documentation
@@ -93,9 +93,11 @@ Raw Data → Data Cleaning → Feature Engineering → Model Training → Evalua
 
 ### 🌐 **Web Application Stack**
 ```
-Frontend (Streamlit) ←→ REST API ←→ Backend (FastAPI) ←→ ML Model (scikit-learn)
-       ↓                    ↓              ↓                    ↓
-   Modern UI          JSON/HTTP      Business Logic      Predictions
+Streamlit App (Frontend + ML Model Integrated)
+       ↓
+   Modern UI → Direct Model Loading → Predictions → Business Logic
+       ↓              ↓                    ↓              ↓
+   User Input    joblib.load()      scikit-learn    Insights Display
 ```
 
 ### 📊 **Data Flow**
@@ -107,39 +109,29 @@ User Input → Validation → Feature Engineering → ML Prediction → Business
 
 ## 🚀 Quick Start Guide
 
-### 🔧 **Option 1: Automated Setup (Recommended)**
+### 🌐 **Option 1: Use Live Demo (Easiest)**
+Visit the deployed app: **[Canteen Menu Optimizer](https://your-app-url.streamlit.app)**
+
+### 🛠️ **Option 2: Run Locally**
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/Quantumcoder47/canteen-menu-optimizer.git
 cd canteen-menu-optimizer
 
-# Windows users
-install.bat
-
-# Or use Python setup
-python setup.py install
-```
-
-### 🛠️ **Option 2: Manual Setup**
-```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Start backend (Terminal 1)
-cd canteen-App/backend
-python main.py
-# Backend: http://localhost:8000
-
-# Start frontend (Terminal 2)  
-cd canteen-App/frontend
-streamlit run app.py
-# Frontend: http://localhost:8501
+# Run the Streamlit app
+streamlit run canteen-App/frontend/app.py
+# App opens at: http://localhost:8501
 ```
 
-### ✅ **Verify Installation**
+### 🐍 **Option 3: Run Business Optimizer**
 ```bash
-# Run system tests
-python canteen-App/test_system.py
+# Generate business insights and train model
+python notebooks/canteen_business_optimizer.py
+
+# Outputs saved to business_insights/ directory
 ```
 
 ---
@@ -207,44 +199,30 @@ python canteen-App/test_system.py
 
 ---
 
-## 🔌 API Documentation
+## 🎯 How to Use the App
 
-### 🌐 **Endpoints**
-| Endpoint | Method | Description | Response |
-|----------|--------|-------------|----------|
-| `/` | GET | API information | JSON status |
-| `/health` | GET | Health check | System status |
-| `/predict` | POST | Make prediction | Prediction + insights |
-| `/model-info` | GET | Model details | Model metadata |
-| `/docs` | GET | Interactive docs | Swagger UI |
+### 📝 **Step-by-Step Guide**
 
-### 📝 **Example Request**
-```json
-{
-  "age": 21,
-  "height_cm": 175.0,
-  "weight_kg": 70.0,
-  "spice_tolerance": 7,
-  "sweet_tooth_level": 6,
-  "eating_out_per_week": 4,
-  "food_budget_per_meal": 200.0,
-  "cuisine_top1": "Indian"
-}
-```
+1. **Open the App**: Visit the live demo or run locally
+2. **Fill the Form**: Enter student information
+   - Personal details (age, height, weight)
+   - Food preferences (spice, sweet levels)
+   - Eating habits (frequency, budget, cuisine)
+3. **Generate Prediction**: Click "🔮 Generate AI Prediction"
+4. **View Results**: Get instant predictions with:
+   - Dietary preference prediction
+   - Confidence score and probability
+   - Popular menu items
+   - Cost analysis and profit margins
+   - Business recommendations
+5. **Export Data**: Download complete analysis as JSON
 
-### 📊 **Example Response**
+### 📊 **Sample Output**
 ```json
 {
   "predicted_preference": "Non-Veg",
   "confidence": "High",
   "probability": 0.85,
-  "all_probabilities": {
-    "Non-Veg": 0.85,
-    "Veg": 0.10,
-    "Vegan": 0.03,
-    "Jain": 0.01,
-    "Eggitarian": 0.01
-  },
   "business_insights": {
     "popular_items": ["Chicken Curry", "Mutton Biryani"],
     "estimated_cost": 150,
@@ -305,27 +283,32 @@ python setup.py dev
 
 ---
 
-## 🚀 Deployment Options
+## 🚀 Deployment
 
-### 🐳 **Docker Deployment** (Future Enhancement)
+### ☁️ **Current Deployment**
+- **Platform**: Streamlit Cloud
+- **Status**: ✅ Live and Running
+- **URL**: [Visit App](https://your-app-url.streamlit.app)
+- **Auto-Deploy**: Enabled on GitHub push
+
+### 📦 **Deploy Your Own**
+1. Fork this repository
+2. Sign up at [share.streamlit.io](https://share.streamlit.io)
+3. Connect your GitHub account
+4. Select repository: `canteen-menu-optimizer`
+5. Set main file: `canteen-App/frontend/app.py`
+6. Click "Deploy"!
+
+### 🐳 **Docker Deployment** (Optional)
 ```dockerfile
-# Backend
 FROM python:3.9-slim
-COPY backend/ /app
+WORKDIR /app
+COPY requirements.txt .
 RUN pip install -r requirements.txt
-CMD ["python", "main.py"]
-
-# Frontend  
-FROM python:3.9-slim
-COPY frontend/ /app
-RUN pip install -r requirements.txt
+COPY canteen-App/frontend/ .
+COPY canteen-App/model/ ./model/
 CMD ["streamlit", "run", "app.py"]
 ```
-
-### ☁️ **Cloud Deployment Options**
-- **Backend**: Heroku, AWS Lambda, Google Cloud Run
-- **Frontend**: Streamlit Cloud, Heroku, Netlify
-- **Database**: PostgreSQL, MongoDB for user data storage
 
 ---
 
@@ -336,16 +319,16 @@ CMD ["streamlit", "run", "app.py"]
 - [ ] **Multi-location Support** for canteen chains
 - [ ] **Mobile App Integration** with React Native
 - [ ] **Advanced ML Models** (Deep Learning, XGBoost)
-- [ ] **A/B Testing Framework** for menu optimization
+- [ ] **Historical Data Tracking** for trend analysis
 - [ ] **Integration APIs** for POS systems and inventory management
 
 ### 🎯 **Technical Improvements**
-- [ ] **Database Integration** for persistent storage
-- [ ] **User Authentication** and role-based access
-- [ ] **Caching Layer** with Redis for performance
-- [ ] **Monitoring & Alerting** with Prometheus/Grafana
+- [ ] **Database Integration** for persistent storage (PostgreSQL/MongoDB)
+- [ ] **User Authentication** and role-based access control
+- [ ] **Enhanced Caching** with st.cache_resource optimization
+- [ ] **Monitoring & Analytics** with usage tracking
 - [ ] **CI/CD Pipeline** with GitHub Actions
-- [ ] **Load Testing** and performance optimization
+- [ ] **Performance Optimization** and load testing
 
 ---
 
