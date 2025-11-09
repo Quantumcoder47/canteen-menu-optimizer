@@ -62,6 +62,7 @@ canteen-menu-optimizer/
 │   └── 📖 README.md                  # Web app documentation
 │
 ├── 📁 notebooks/                      # Data Science Workflows
+│   ├── 📖 README.md  # Notebook Directory
 │   ├── 🐍 canteen_business_optimizer.py  # Advanced ML pipeline
 │   ├── 📊 data.csv                   # Raw survey dataset (111 samples)
 │   └── 📁 results/                   # Analysis outputs
