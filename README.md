@@ -75,15 +75,9 @@ canteen-menu-optimizer/
 │   ├── 📦 inventory_recommendations.csv  # Daily inventory planning
 │   └── 💡 menu_optimization_report.json  # Business recommendations
 │
-├── 📁 results/                        # ML Experiment Results
-│   ├── 📈 feature_importance_analysis.csv
-│   ├── 🧹 improved_canteen_data_clean.csv
-│   └── 📋 model_performance_summary.json
-│
-├── 💻 install.bat                    # Windows installation script
+├── 🔒 .gitignore                     # Git ignore rules
 ├── 📄 requirements.txt               # Complete project dependencies
-├── 📖 README.md                      # This comprehensive guide
-└── 🔒 .gitignore                     # Git ignore rules
+└── 📖 README.md                      # This comprehensive guide
 ```
 
 ---
