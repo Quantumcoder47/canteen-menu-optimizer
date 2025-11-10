@@ -111,7 +111,7 @@ User Input → Validation → Feature Engineering → ML Prediction → Business
 ## 🚀 Quick Start Guide
 
 ### 🌐 **Option 1: Use Live Demo (Easiest)**
-Visit the deployed app: **[Canteen Menu Optimizer](https://your-app-url.streamlit.app)**
+Visit the deployed app: **[Canteen Menu Optimizer](https://canteen-menu-optimizer.streamlit.app/)**
 
 ### 🛠️ **Option 2: Run Locally**
 ```bash
